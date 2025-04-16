@@ -1,21 +1,33 @@
-import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../../firebase/config';
 import Button from '../ui/Button';
 import { GoogleIcon } from '../ui/Icons';
-import { useAppNotification } from '../../context/NotificationContext';
-
+import { useAuth } from '../../context/AuthContext';
 
 export default function SocialAuth({ action }) {
-  const { showNotification } = useAppNotification();
+  const router = useRouter();
+  const { currentUser } = useAuth();
 
   const handleGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-      showNotification(`Signed in with Google successfully`, 'success');
+
+      // Wait for the currentUser to update
+      const waitForAuth = new Promise((resolve) => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+          if (user) {
+            unsubscribe();
+            resolve();
+          }
+        });
+      });
+
+      await waitForAuth;
+      router.push('/dashboard'); // Redirect to dashboard after auth state updates
     } catch (error) {
-      showNotification(error.message, 'error');
+      console.error('Google Sign-In Error:', error.message);
     }
   };
 
@@ -33,8 +45,8 @@ export default function SocialAuth({ action }) {
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-3">
-        <Button 
-          variant="secondary" 
+        <Button
+          variant="secondary"
           onClick={handleGoogleSignIn}
           className="flex items-center justify-center"
         >

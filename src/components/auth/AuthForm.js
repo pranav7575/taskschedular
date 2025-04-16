@@ -10,14 +10,18 @@ export default function AuthForm({ title, subtitle, action, linkText, linkHref }
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { signup, login, resetPassword } = useAuth();
+  const [processing, setProcessing] = useState(false); // renamed to avoid clash with auth's loading
+  const { signup, login, resetPassword, loading } = useAuth(); // pulling loading from auth context
   const router = useRouter();
+
+  if (loading) {
+    return <div>Loading...</div>; // show while checking auth state
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setProcessing(true);
 
     try {
       if (action === 'register') {
@@ -35,7 +39,7 @@ export default function AuthForm({ title, subtitle, action, linkText, linkHref }
       setError(err.message);
     }
 
-    setLoading(false);
+    setProcessing(false);
   }
 
   return (
@@ -90,10 +94,14 @@ export default function AuthForm({ title, subtitle, action, linkText, linkHref }
           </div>
         )}
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Processing...' : 
-            action === 'register' ? 'Sign Up' : 
-            action === 'login' ? 'Log In' : 'Reset Password'}
+        <Button type="submit" className="w-full" disabled={processing}>
+          {processing
+            ? 'Processing...'
+            : action === 'register'
+            ? 'Sign Up'
+            : action === 'login'
+            ? 'Log In'
+            : 'Reset Password'}
         </Button>
       </form>
 

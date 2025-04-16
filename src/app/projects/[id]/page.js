@@ -7,9 +7,11 @@ import TaskForm from '../../../components/tasks/TaskForm';
 import Button from '../../../components/ui/Button';
 import Modal from '../../../components/ui/Modal';
 import Link from 'next/link';
+import { use } from 'react';
 
 export default function ProjectDetails({ params }) {
-  const { id } = params;
+  const unwrappedParams = use(params);
+  const { id } = unwrappedParams;
   const { tasks, loading: tasksLoading, addTask } = useTasks();
   const { projects, loading: projectsLoading } = useProjects();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -65,7 +67,7 @@ export default function ProjectDetails({ params }) {
             onDelete={() => {
               // Implement delete functionality
             }}
-            onToggleStatus={() => {
+            onToggleStatus={(newStatus) => {
               // Implement toggle status
             }}
           />

@@ -16,13 +16,13 @@ export function ThemeProvider({ children }) {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleSystemThemeChange = (e) => {
       if (theme === 'system') {
-        document.documentElement.classList.toggle('dark', e.matches);
+        applyTheme(e.matches ? 'dark' : 'light');
       }
     };
     mediaQuery.addEventListener('change', handleSystemThemeChange);
 
     return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
-  }, [theme]);
+  }, []);
 
   const applyTheme = (themeToApply) => {
     if (themeToApply === 'system') {

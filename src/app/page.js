@@ -4,7 +4,11 @@ import Link from 'next/link';
 import Button from '../components/ui/Button';
 
 export default function Home() {
-  const { currentUser } = useAuth();
+  const { currentUser, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading indicator while determining auth state
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -13,7 +17,7 @@ export default function Home() {
         <p className="text-xl text-gray-600 mb-8">
           Organize your work, collaborate with your team, and get things done efficiently.
         </p>
-        
+
         {currentUser ? (
           <Link href="/dashboard">
             <Button size="lg">Go to Dashboard</Button>

@@ -1,8 +1,64 @@
 'use client';
 import { useState } from 'react';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameDay, isSameMonth, isToday } from 'date-fns';
-import Button from '../ui/Button';
+import { format } from 'date-fns';
 import Dropdown from '../ui/Dropdown';
+
+// Responsive Button Component
+function ResponsiveButton({
+  children,
+  onClick,
+  variant = 'primary',
+  size = 'md',
+  fullWidth = false,
+  disabled = false,
+  type = 'button',
+  className = '',
+}) {
+  // Base styles for all buttons
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
+  
+  // Variant styles
+  const variantStyles = {
+    primary: 'bg-indigo-600 hover:bg-indigo-700 text-white focus:ring-indigo-500',
+    secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-800 focus:ring-gray-400',
+    success: 'bg-green-600 hover:bg-green-700 text-white focus:ring-green-500',
+    danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
+    outline: 'border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 focus:ring-indigo-500',
+  };
+  
+  // Size styles (responsive)
+  const sizeStyles = {
+    xs: 'text-xs px-2 py-1 sm:px-2.5 sm:py-1',
+    sm: 'text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1.5',
+    md: 'text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2',
+    lg: 'text-base sm:text-lg px-4 py-2 sm:px-5 sm:py-2.5',
+    xl: 'text-lg sm:text-xl px-5 py-2.5 sm:px-6 sm:py-3',
+  };
+  
+  // Width styles
+  const widthStyles = fullWidth ? 'w-full' : '';
+  
+  // Disabled styles
+  const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : '';
+  
+  return (
+    <button
+      type={type}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      className={`
+        ${baseStyles}
+        ${variantStyles[variant] || variantStyles.primary}
+        ${sizeStyles[size] || sizeStyles.md}
+        ${widthStyles}
+        ${disabledStyles}
+        ${className}
+      `}
+    >
+      {children}
+    </button>
+  );
+}
 
 const priorityIcons = {
   high: (
@@ -112,7 +168,7 @@ export default function TaskCard({ task, onEdit, onDelete, onToggleStatus, teamM
         </div>
 
         {!compact && (
-          <Button
+          <ResponsiveButton
             size="sm"
             variant={task.status === 'completed' ? 'secondary' : 'primary'}
             onClick={onToggleStatus}
@@ -127,7 +183,7 @@ export default function TaskCard({ task, onEdit, onDelete, onToggleStatus, teamM
             ) : (
               'Mark Complete'
             )}
-          </Button>
+          </ResponsiveButton>
         )}
       </div>
     </div>
